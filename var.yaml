@@ -1,0 +1,32 @@
+- hosts: all
+  become: true
+  tasks:
+    - name: practicing var
+      debug:
+        msg: this variable is printed from the variable declaration o/s "{{user}}" "{{dob}}"
+    - name: setup mod
+      setup:
+        filter:
+          - "ansible_user_dir"
+          - 'ansible_machine_id'
+      register: op
+    - debug:
+        var: op.ansible_facts.ansible_machine_id
+    - debug:
+        var: ansible_distribution
+    - name: copy files to target machine
+      copy:
+        src: /home/ubuntu/ansible/roles/practice/
+        dest: ./
+    - name: making a directory
+      file:
+        path: ./by_ansible
+        state: directory
+    - name: creating a file
+      file:
+        path: ./newfile.txt
+        state: touch
+    - name: adding content to file
+      copy:
+        content: this text is written by using ansible
+        dest: ./newfile.txt

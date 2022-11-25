@@ -1,0 +1,54 @@
+---
+- name: usecases
+      #prompt: What is your username?
+      #private: false
+  hosts: vm
+#  gathering_facts: False
+  become: true
+  vars_prompt:
+    - name: username
+      prompt: What is your username?
+      private: false
+  tasks:
+   # - name: uninstall
+#      apt:
+ #       name: nginx
+  #      state: absent
+
+    - name: update
+      command: sudo apt update
+      when: username == "vishal"
+    - name: installing apache server
+      apt:
+        name: apache2
+        #update_cache: yes
+        state: present
+
+    - name: starting the service
+      service:
+         name: apache2
+         state: stopped
+         enabled: yes
+
+    - name: including and importing tasks
+      include_tasks: task.yaml
+
+    - name: print the username
+      debug:
+        var: username
+- name: importing playbooks
+  import_playbook: play3.yaml
+#    - name: to check the service
+ #     service_facts:
+  #    debug:
+   ##     msg: it is installed
+     # when: "'nginx' in services"
+#    - name: to check the service
+ #     ansible.builtin.service_facts:
+   #     name: apache2.service
+  #      state: running
+
+#    - name: result
+ #     debug:
+  #      var: ansible.builtin.service_facts
+

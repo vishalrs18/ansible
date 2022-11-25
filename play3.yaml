@@ -1,0 +1,27 @@
+- name: block tasks
+  hosts: vm
+  become: true
+  vars_prompt:
+    - name: day
+      prompt: whats the day today
+      private: true
+  tasks:
+    - name: practice tasks
+      block:
+        - name: task 1
+          debug:
+            msg: "msg3"
+
+        - name: task 2
+          debug:
+            msg: "msg2"
+      when: day == "wed"
+
+      rescue:
+        - name: task4
+          debug:
+            msg: "msg4"
+      always:
+        - name: task 2
+          debug:
+            msg: "msg2"

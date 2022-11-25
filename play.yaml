@@ -1,0 +1,37 @@
+- name: usecases
+  hosts: localhost
+  become: true
+  tasks:
+    - name: version check of server
+      command: cat /etc/os-release
+      register: result
+
+    - name: result of the tasks
+      debug: 
+        var: result
+
+    - name: ec2 provisioning
+      amazon.aws.ec2_key:
+        name: mykey
+        region: us-east-1
+      register: keys
+
+    - name: private key
+      debug:
+        var: keys
+
+    - name: ec2 key copy
+      copy:
+        content: "{{keys.key.private_key}}"
+        dest: ./new.pem
+      when: keys.changed
+
+    - name: creating eC2
+      amazon.aws.ec2:
+        key_name: mykey
+#        instance_type: t2.micro
+ #       image: ami-0f9fc25dd2506cf6d
+        region: us-east-1
+        wait: yes
+          #vpc_subnet_id: subnet-02e28b9e4a08d1810
+          #assign_public_ip: yes
